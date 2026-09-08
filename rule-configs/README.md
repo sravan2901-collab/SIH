@@ -1,0 +1,1 @@
+Versioned rule configuration data for the Legal Metrology (Packaged Commodities) Rules 2011 — seed scripts and JSON/CSV rule definitions (mandatory fields, regex patterns, font thresholds, placement zones) consumed by the Rule Validation Engine.

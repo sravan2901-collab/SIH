@@ -1,0 +1,1 @@
+Celery task workers for the async processing chain: image preprocessing (OpenCV), OCR (PaddleOCR/Tesseract), field classification (LayoutLMv3), font & readability analysis, rule validation engine, and PDF/DOCX report generation.

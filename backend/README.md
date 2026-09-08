@@ -1,0 +1,1 @@
+FastAPI backend service — REST API (Auth, Products, Scans, Reports, Dashboard routers), SQLAlchemy models, Alembic migrations, Celery app definition, and S3/MinIO storage client for the LMPC Compliance System.
