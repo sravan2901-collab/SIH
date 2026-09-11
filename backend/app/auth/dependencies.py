@@ -60,3 +60,13 @@ def require_reviewer_or_admin(user: User = Depends(get_current_user)) -> User:
             detail="Reviewer or Admin role required",
         )
     return user
+
+
+def require_admin(user: User = Depends(get_current_user)) -> User:
+    """Gate a route to Admin-role users only."""
+    if user.role != "Admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin role required",
+        )
+    return user
