@@ -1,4 +1,4 @@
-﻿"""Integration tests for the /products endpoints.
+"""Integration tests for the /products endpoints.
 
 Covers catalog search, creation, retrieval, and partial updates with role-based access control.
 Requires a reachable, migrated Postgres database (same as test_auth.py).
@@ -166,6 +166,38 @@ def test_search_finds_product_by_name_and_barcode(
     )
     assert search_barcode_resp.status_code == 200
     results = search_barcode_resp.json()
+    assert any(p["product_id"] == prod["product_id"] for p in results)
+
+
+def test_search_finds_product_with_null_brand(
+    client, inspector_token, admin_token, created_products
+):
+    tag = uuid.uuid4().hex[:8]
+    barcode = f"890{uuid.uuid4().int % 10000000000:010d}"
+    payload = {
+        "name": f"Unbranded Commodity {tag}",
+        "brand": None,
+        "manufacturer_name": "Generic Miller",
+        "category": "Grains",
+        "barcode": barcode,
+    }
+    create_resp = client.post(
+        "/products",
+        json=payload,
+        headers={"Authorization": f"Bearer {inspector_token}"},
+    )
+    assert create_resp.status_code == 201
+    prod = create_resp.json()
+    assert prod["brand"] is None
+    created_products.append(prod["product_id"])
+
+    # Search by name fragment when brand IS NULL
+    search_resp = client.get(
+        f"/products?q=Commodity+{tag}",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert search_resp.status_code == 200
+    results = search_resp.json()
     assert any(p["product_id"] == prod["product_id"] for p in results)
 
 
