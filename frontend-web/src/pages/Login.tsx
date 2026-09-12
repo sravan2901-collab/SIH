@@ -56,7 +56,7 @@ export function Login() {
           {error && (
             <div
               role="alert"
-              className="mb-5 p-3 rounded bg-red-50 border border-red-200 text-sm text-[#B3261E]"
+              className="mb-5 p-3 rounded bg-[#B3261E]/10 border border-[#B3261E]/20 text-sm text-[#B3261E]"
             >
               {error}
             </div>
