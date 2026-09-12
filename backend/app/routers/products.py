@@ -35,8 +35,8 @@ async def search_products(
         func.concat_ws(
             " ",
             Product.name,
-            func.coalesce(Product.brand, ""),
-            func.coalesce(Product.barcode, ""),
+            Product.brand,
+            Product.barcode,
         ),
     )
     search_query = func.plainto_tsquery("english", q)
