@@ -14,6 +14,15 @@ class ProductCreate(BaseModel):
     barcode: str | None = None
 
 
+class ProductUpdate(BaseModel):
+    name: str | None = None
+    brand: str | None = None
+    manufacturer_name: str | None = None
+    manufacturer_address: str | None = None
+    category: str | None = None
+    barcode: str | None = None
+
+
 class ProductRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

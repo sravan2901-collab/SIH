@@ -52,6 +52,16 @@ def require_inspector(user: User = Depends(get_current_user)) -> User:
     return user
 
 
+def require_inspector_or_admin(user: User = Depends(get_current_user)) -> User:
+    """Gate a route to Inspector- or Admin-role users."""
+    if user.role not in ("Inspector", "Admin"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Inspector or Admin role required",
+        )
+    return user
+
+
 def require_reviewer_or_admin(user: User = Depends(get_current_user)) -> User:
     """Gate a route to Reviewer- or Admin-role users."""
     if user.role not in ("Reviewer", "Admin"):

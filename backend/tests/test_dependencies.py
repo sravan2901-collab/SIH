@@ -13,7 +13,11 @@ database, unlike every other test in this suite.
 import pytest
 from fastapi import HTTPException
 
-from app.auth.dependencies import require_inspector, require_reviewer_or_admin
+from app.auth.dependencies import (
+    require_inspector,
+    require_inspector_or_admin,
+    require_reviewer_or_admin,
+)
 
 
 class _StubUser:
@@ -43,3 +47,16 @@ def test_require_reviewer_or_admin_blocks_inspector():
     with pytest.raises(HTTPException) as exc_info:
         require_reviewer_or_admin(_StubUser("Inspector"))
     assert exc_info.value.status_code == 403
+
+
+def test_require_inspector_or_admin_allows_inspector_and_admin():
+    for role in ("Inspector", "Admin"):
+        user = _StubUser(role)
+        assert require_inspector_or_admin(user) is user
+
+
+def test_require_inspector_or_admin_blocks_reviewer():
+    with pytest.raises(HTTPException) as exc_info:
+        require_inspector_or_admin(_StubUser("Reviewer"))
+    assert exc_info.value.status_code == 403
+
