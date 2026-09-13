@@ -21,7 +21,7 @@ export interface CurrentUser {
 }
 
 export const ROLE_HOME: Record<Role, string> = {
-  Inspector: "/scan",
+  Inspector: "/products",
   Reviewer: "/dashboard",
   Admin: "/dashboard",
 };
