@@ -22,6 +22,10 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+# Precomputed dummy hash computed once at import time to prevent timing side-channels
+# on login when an email does not exist in the database.
+DUMMY_PASSWORD_HASH = hash_password("dummy_password_timing_safe_sentinel_string")
+
 
 @router.get("/health")
 async def health():
@@ -38,7 +42,12 @@ async def login(
     result = await db.execute(select(User).where(User.email == payload.email))
     user = result.scalar_one_or_none()
 
-    if user is None or not verify_password(payload.password, user.password_hash):
+    # Timing-safe password verification: always execute verify_password even if user is None
+    # to avoid measurable timing differences between existing and non-existing accounts.
+    password_hash = user.password_hash if user is not None else DUMMY_PASSWORD_HASH
+    is_valid = verify_password(payload.password, password_hash)
+
+    if user is None or not is_valid:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",

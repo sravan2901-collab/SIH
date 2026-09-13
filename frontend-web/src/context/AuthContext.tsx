@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { apiFetch } from "../lib/apiClient";
-import type { CurrentUser, Role } from "../types/auth";
+import { TOKEN_STORAGE_KEY, type CurrentUser, type Role } from "../types/auth";
+
+export { TOKEN_STORAGE_KEY };
 
 interface AuthContextType {
   token: string | null;
@@ -12,8 +14,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const TOKEN_STORAGE_KEY = "lmpc_token";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);

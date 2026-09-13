@@ -215,6 +215,16 @@ def test_create_product_reviewer_forbidden(client, reviewer_token):
     assert resp.json()["detail"] == "Inspector role required"
 
 
+def test_create_product_rejects_empty_and_whitespace_name(client, inspector_token):
+    for bad_name in ("", "   "):
+        resp = client.post(
+            "/products",
+            json={"name": bad_name},
+            headers={"Authorization": f"Bearer {inspector_token}"},
+        )
+        assert resp.status_code == 422
+
+
 def test_create_product_inspector_success(client, inspector_token, created_products):
     barcode = f"890{uuid.uuid4().int % 10000000000:010d}"
     payload = {

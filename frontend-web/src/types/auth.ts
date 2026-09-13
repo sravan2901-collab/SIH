@@ -25,3 +25,5 @@ export const ROLE_HOME: Record<Role, string> = {
   Reviewer: "/dashboard",
   Admin: "/dashboard",
 };
+
+export const TOKEN_STORAGE_KEY = "lmpc_token";

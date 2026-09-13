@@ -1,3 +1,5 @@
+import { TOKEN_STORAGE_KEY } from "../types/auth";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
 
 export class ApiError extends Error {
@@ -24,6 +26,13 @@ export async function apiFetch<T>(
   });
 
   if (!res.ok) {
+    if (res.status === 401 && typeof window !== "undefined") {
+      localStorage.removeItem(TOKEN_STORAGE_KEY);
+      if (window.location.pathname.replace(/\/+$/, "") !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+
     let detail = "Something went wrong. Please try again.";
     try {
       detail = (await res.json()).detail ?? detail;

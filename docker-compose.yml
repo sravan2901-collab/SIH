@@ -58,6 +58,11 @@ services:
     ports:
       - "8000:8000"
     env_file: .env
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/products/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
       db:
         condition: service_healthy
@@ -76,6 +81,11 @@ services:
     restart: unless-stopped
     command: celery -A app.celery_app worker --loglevel=info
     env_file: .env
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A app.celery_app inspect ping || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
       db:
         condition: service_healthy

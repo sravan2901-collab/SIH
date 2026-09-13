@@ -112,3 +112,49 @@ def test_inspector_token_on_reviewer_route_returns_403(client, inspector_token):
     )
     assert resp.status_code == 403
     assert resp.json()["detail"] == "Reviewer or Admin role required"
+
+
+def test_missing_user_and_wrong_password_return_identical_401(client):
+    wrong_pass_resp = client.post(
+        "/auth/login", json={"email": ADMIN_EMAIL, "password": "wrong-password"}
+    )
+    assert wrong_pass_resp.status_code == 401
+
+    missing_user_resp = client.post(
+        "/auth/login",
+        json={"email": "nonexistent_user_xyz@lmpc.gov", "password": "wrong-password"},
+    )
+    assert missing_user_resp.status_code == 401
+
+    assert wrong_pass_resp.json()["detail"] == missing_user_resp.json()["detail"]
+    assert wrong_pass_resp.json()["detail"] == "Incorrect email or password"
+
+
+def test_register_validation_rejects_empty_and_short_password(client, admin_token):
+    for bad_pwd in ("", "short"):
+        resp = client.post(
+            "/auth/register",
+            json={
+                "name": "Valid Name",
+                "email": f"badpass.{uuid.uuid4().hex[:8]}@lmpc.gov",
+                "password": bad_pwd,
+                "role": "Inspector",
+            },
+            headers={"Authorization": f"Bearer {admin_token}"},
+        )
+        assert resp.status_code == 422
+
+
+def test_register_validation_rejects_empty_and_whitespace_name(client, admin_token):
+    for bad_name in ("", "   "):
+        resp = client.post(
+            "/auth/register",
+            json={
+                "name": bad_name,
+                "email": f"badname.{uuid.uuid4().hex[:8]}@lmpc.gov",
+                "password": "ValidPassword123!",
+                "role": "Inspector",
+            },
+            headers={"Authorization": f"Bearer {admin_token}"},
+        )
+        assert resp.status_code == 422
