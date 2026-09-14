@@ -211,8 +211,11 @@ def test_upload_scan_success_and_chain_execution(client, inspector_auth, test_pr
     assert db_scan["uploaded_by"] == inspector_auth["user_id"]
     assert db_scan["raw_image_path"] == f"raw-images/{scan_id_str}/original.jpg"
     assert db_scan["preprocessed_image_path"] is None
-    # Scan row in PostgreSQL starts with status="queued"
-    assert db_scan["status"] == "queued"
+    # Verify PostgreSQL row: by the time the eager Celery chain returns,
+    # the stub tasks have updated the Scan row status in Postgres to "processing"
+    assert db_scan["status"] == "processing"
+
+
 
     # Clean up MinIO and database
     try:

@@ -8,6 +8,7 @@ for candidate in (backend_dir, Path("/app")):
         sys.path.insert(0, str(candidate))
 
 from app.celery_app import celery_app  # noqa: E402
+from tasks.db import update_scan_status  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -20,4 +21,6 @@ def run_ocr(scan_id: str):
     Real PaddleOCR/Tesseract logic lands in Phase 5.
     """
     logger.info("Setting Scan.status='processing' for scan_id=%s (stub)", scan_id)
+    update_scan_status(scan_id, "processing")
     return scan_id
+
