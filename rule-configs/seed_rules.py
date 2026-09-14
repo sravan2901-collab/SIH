@@ -43,7 +43,7 @@ RULES = [
         "field_name": "net_quantity",
         "mandatory": True,
         "regex_pattern": r"^\d+(\.\d+)?\s*(g|kg|ml|L|oz)$",
-        "min_font_height_mm": 1.0,
+        "min_font_height_mm": 2.0,
         "placement_zone": "PDP",
         "language_requirement": None,
         "version": "1.0",
