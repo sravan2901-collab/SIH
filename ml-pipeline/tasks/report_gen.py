@@ -14,13 +14,15 @@ logger = logging.getLogger(__name__)
 
 
 @celery_app.task(name="tasks.generate_report")
-def generate_report(scan_id: str):
+def generate_report(scan_data):
     """Report generation stub (Phase 3).
 
     Conceptually sets Scan.status="processing" and completes task chain.
     Real PDF/DOCX report generation lands in Phase 9.
     """
+    scan_id = scan_data["scan_id"] if isinstance(scan_data, dict) else str(scan_data)
     logger.info("Setting Scan.status='processing' for scan_id=%s (stub)", scan_id)
     update_scan_status(scan_id, "processing")
-    return scan_id
+    return scan_data
+
 

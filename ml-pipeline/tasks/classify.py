@@ -14,12 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 @celery_app.task(name="tasks.classify_fields")
-def classify_fields(scan_id: str):
+def classify_fields(scan_data):
     """Field classification stub (Phase 3).
 
-    Conceptually sets Scan.status="processing" and passes scan_id through to next link in chain.
+    Conceptually sets Scan.status="processing" and passes scan_data through to next link in chain.
     Real layoutlm / rule classification logic lands in Phase 6.
     """
+    scan_id = scan_data["scan_id"] if isinstance(scan_data, dict) else str(scan_data)
     logger.info("Setting Scan.status='processing' for scan_id=%s (stub)", scan_id)
     update_scan_status(scan_id, "processing")
-    return scan_id
+    return scan_data
+

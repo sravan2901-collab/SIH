@@ -14,13 +14,15 @@ logger = logging.getLogger(__name__)
 
 
 @celery_app.task(name="tasks.validate_rules")
-def validate_rules(scan_id: str):
+def validate_rules(scan_data):
     """Rule validation engine stub (Phase 3).
 
-    Conceptually sets Scan.status="processing" and passes scan_id through to next link in chain.
+    Conceptually sets Scan.status="processing" and passes scan_data through to next link in chain.
     Real LMPC rule evaluation lands in Phase 8.
     """
+    scan_id = scan_data["scan_id"] if isinstance(scan_data, dict) else str(scan_data)
     logger.info("Setting Scan.status='processing' for scan_id=%s (stub)", scan_id)
     update_scan_status(scan_id, "processing")
-    return scan_id
+    return scan_data
+
 
