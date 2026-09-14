@@ -1,0 +1,38 @@
+﻿<!-- IMPORTANT: this is a permissions-only stub.
+     Run `flutter create .` inside frontend-mobile/ to generate the full
+     Android project structure (build.gradle, Kotlin files, etc.) first.
+     Then merge these <uses-permission> entries into the generated
+     AndroidManifest.xml at android/app/src/main/AndroidManifest.xml.
+
+     Required for:
+       - camera: CAMERA
+       - hive (disk): READ/WRITE_EXTERNAL_STORAGE (API <29)
+       - workmanager: RECEIVE_BOOT_COMPLETED, FOREGROUND_SERVICE
+       - connectivity_plus: INTERNET, ACCESS_NETWORK_STATE, CHANGE_NETWORK_STATE
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Network -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+
+    <!-- Camera -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <!-- Storage (required on Android < 10 for image save/read) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
+    <!-- Workmanager background tasks -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
+    <!-- flutter_secure_storage requires API >= 23 -->
+    <!-- minSdkVersion should be 23 in build.gradle -->
+
+</manifest>
