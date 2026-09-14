@@ -16,14 +16,16 @@ export async function apiFetch<T>(
   options: RequestInit = {},
   token?: string | null
 ): Promise<T> {
+  const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
   const res = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   });
+
 
   if (!res.ok) {
     if (res.status === 401 && typeof window !== "undefined") {
