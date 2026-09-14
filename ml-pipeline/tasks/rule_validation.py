@@ -1,0 +1,23 @@
+import logging
+import sys
+from pathlib import Path
+
+backend_dir = Path(__file__).resolve().parent.parent.parent / "backend"
+for candidate in (backend_dir, Path("/app")):
+    if candidate.exists() and str(candidate) not in sys.path:
+        sys.path.insert(0, str(candidate))
+
+from app.celery_app import celery_app  # noqa: E402
+
+logger = logging.getLogger(__name__)
+
+
+@celery_app.task(name="tasks.validate_rules")
+def validate_rules(scan_id: str):
+    """Rule validation engine stub (Phase 3).
+
+    Conceptually sets Scan.status="processing" and passes scan_id through to next link in chain.
+    Real LMPC rule evaluation lands in Phase 8.
+    """
+    logger.info("Setting Scan.status='processing' for scan_id=%s (stub)", scan_id)
+    return scan_id

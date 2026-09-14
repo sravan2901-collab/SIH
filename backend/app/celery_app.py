@@ -12,3 +12,17 @@ celery_app.conf.update(
     timezone="UTC",
     enable_utc=True,
 )
+
+# Register pipeline tasks
+try:
+    from app.tasks import (  # noqa: F401
+        preprocess,
+        run_ocr,
+        classify_fields,
+        check_font,
+        validate_rules,
+        generate_report,
+    )
+except Exception:
+    pass
+
