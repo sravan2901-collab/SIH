@@ -5,7 +5,7 @@ import { apiFetch, ApiError } from "../lib/apiClient";
 import type { Product } from "../types/product";
 import type { ScanRead, ScanStatusRead, ScanStatus } from "../types/scan";
 
-export function Scan() {
+export function ScanUpload() {
   const { token, role, userId, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();

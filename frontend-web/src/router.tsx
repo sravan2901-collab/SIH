@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router";
 import { useAuth } from "./context/AuthContext";
 import { Login } from "./pages/Login";
 import { ProductSelect } from "./pages/ProductSelect";
-import { Scan } from "./pages/Scan";
+import { ScanUpload } from "./pages/ScanUpload";
 import { Dashboard } from "./pages/Dashboard";
 import type { Role } from "./types/auth";
 
@@ -38,7 +38,7 @@ export function AppRoutes() {
         path="/scan"
         element={
           <ProtectedRoute allowedRoles={["Inspector"]}>
-            <Scan />
+            <ScanUpload />
           </ProtectedRoute>
         }
       />
