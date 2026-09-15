@@ -1,9 +1,9 @@
-﻿import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'constants.dart';
 import 'scan_status_screen.dart';
 import 'upload_queue.dart';
 
@@ -45,7 +45,7 @@ class _PdpFrameOverlay extends CustomPainter {
 
     // --- Rounded-rect border ---
     final borderPaint = Paint()
-      ..color = Colors.white.withOpacity(0.85)
+      ..color = Colors.white.withValues(alpha: 0.85)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
     canvas.drawRRect(
@@ -238,15 +238,13 @@ class _CameraScreenState extends State<CameraScreen>
 
     if (uploaded > 0) {
       // Flush succeeded — find the scan_id assigned by the server.
-      final box = UploadQueueService.instance;
-      // The entry's remoteScanId is now set after a successful flush.
       // Re-read from Hive by localId to get the remoteScanId.
       final entry = Hive.box<PendingUpload>(kPendingUploadsBox).get(localId);
       final scanId = entry?.remoteScanId;
 
       if (scanId != null) {
         Navigator.of(context).push(
-          MaterialPageRoute(
+          MaterialPageRoute<void>(
             builder: (_) => ScanStatusScreen(scanId: scanId),
           ),
         );
@@ -294,7 +292,7 @@ class _CameraScreenState extends State<CameraScreen>
         CameraPreview(controller),
 
         // PDP framing overlay on top.
-        CustomPaint(painter: const _PdpFrameOverlay()),
+        const CustomPaint(painter: _PdpFrameOverlay()),
 
         // Controls bar at the bottom.
         Positioned(

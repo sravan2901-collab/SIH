@@ -1,5 +1,4 @@
-﻿import 'dart:io';
-import 'dart:isolate';
+import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
@@ -8,7 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'package:workmanager/workmanager.dart';
 
 import '../constants.dart';
-import 'api_service.dart';
+import 'services/api_service.dart';
 
 // ---------------------------------------------------------------------------
 // Hive TypeAdapter for [PendingUpload]

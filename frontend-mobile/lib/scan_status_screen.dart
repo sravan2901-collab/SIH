@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 
@@ -124,7 +124,7 @@ class _ScanStatusScreenState extends State<ScanStatusScreen> {
     // Fire immediately, then every kStatusPollIntervalSec seconds.
     _poll();
     _pollTimer = Timer.periodic(
-      Duration(seconds: kStatusPollIntervalSec),
+      const Duration(seconds: kStatusPollIntervalSec),
       (_) => _poll(),
     );
   }
@@ -290,7 +290,7 @@ class _StatusCard extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: status.color.withOpacity(0.4)),
+        side: BorderSide(color: status.color.withValues(alpha: 0.4)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -315,7 +315,7 @@ class _StatusCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: status.progress,
-                backgroundColor: status.color.withOpacity(0.15),
+                backgroundColor: status.color.withValues(alpha: 0.15),
                 valueColor: AlwaysStoppedAnimation<Color>(status.color),
                 minHeight: 6,
               ),

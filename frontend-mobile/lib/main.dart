@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'camera_screen.dart';
@@ -69,7 +69,7 @@ class _Phase3LauncherState extends State<_Phase3Launcher> {
   void _launch() {
     if (!_formKey.currentState!.validate()) return;
     Navigator.of(context).push(
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (_) => CameraScreen(productId: _ctrl.text.trim()),
       ),
     );
