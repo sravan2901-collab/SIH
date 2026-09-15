@@ -1,8 +1,9 @@
-"""Integration tests for RuleConfig seeding and schema verification.
+﻿"""Integration tests for RuleConfig seeding and schema verification.
 
-Verifies that alembic migrations seed all 7 LMPC RuleConfig rows per
-Phase 0 Step 6 of implementation_plan_v2.md, and that mandatory rules
-and regex patterns match Legal Metrology (Packaged Commodities) Rules, 2011.
+Verifies that alembic migrations seed all 9 LMPC RuleConfig rows --
+the 7 original Phase 0 rows plus 2 added by the schema-hardening migration
+(generic_name, country_of_origin) -- per the LMPC Problem Statement ID 26034
+and Legal Metrology (Packaged Commodities) Rules, 2011.
 Source: https://consumeraffairs.gov.in/pages/legal-metrology-act
 """
 import asyncio
@@ -16,10 +17,13 @@ from app.database import DATABASE_URL
 pytestmark = pytest.mark.integration
 
 
-def test_rule_configs_has_exactly_seven_rows_and_correct_rules():
-    """Assert rule_configs has exactly 7 rows after alembic upgrade head,
+def test_rule_configs_has_exactly_nine_rows_and_correct_rules():
+    """Assert rule_configs has exactly 9 rows after alembic upgrade head.
 
-    and that MRP and net_quantity specifically have mandatory=true and their listed regex_pattern.
+    Original 7 rows (Phase 0): MRP, net_quantity, mfg_date, manufacturer_address,
+      consumer_care, unit_sale_price, dimensions.
+    Added by schema-hardening migration (PS gap): generic_name, country_of_origin.
+    All mandatory fields and regex patterns match LMPC Rules 2011.
     """
     async def _query():
         conn = await asyncpg.connect(dsn=DATABASE_URL.replace("+asyncpg", ""))
@@ -29,7 +33,7 @@ def test_rule_configs_has_exactly_seven_rows_and_correct_rules():
             await conn.close()
 
     rows = asyncio.run(_query())
-    assert len(rows) == 7, f"Expected exactly 7 rule_configs rows, got {len(rows)}"
+    assert len(rows) == 9, f"Expected exactly 9 rule_configs rows, got {len(rows)}"
 
     rules_by_field = {row["field_name"]: dict(row) for row in rows}
 
@@ -41,6 +45,8 @@ def test_rule_configs_has_exactly_seven_rows_and_correct_rules():
         "consumer_care",
         "unit_sale_price",
         "dimensions",
+        "generic_name",
+        "country_of_origin",
     }
     assert set(rules_by_field.keys()) == expected_fields
 
@@ -54,7 +60,7 @@ def test_rule_configs_has_exactly_seven_rows_and_correct_rules():
     assert mrp["version"] == "1.0"
     assert mrp["effective_date"] == date(2011, 4, 1)
 
-    # net_quantity row: mandatory=True, listed regex_pattern, 2.0mm min font height, PDP zone
+    # net_quantity row: mandatory=True, 2.0mm min font height, PDP zone
     net_qty = rules_by_field["net_quantity"]
     assert net_qty["mandatory"] is True
     assert net_qty["regex_pattern"] == r"^\d+(\.\d+)?\s*(g|kg|ml|L|oz)$"
@@ -95,3 +101,18 @@ def test_rule_configs_has_exactly_seven_rows_and_correct_rules():
     assert dim["mandatory"] is False
     assert dim["regex_pattern"] is None
     assert dim["min_font_height_mm"] == 1.0
+
+    # generic_name: mandatory=True, no regex, PDP zone (LMPC Rules 2011 Rule 6(1)(a))
+    gn = rules_by_field["generic_name"]
+    assert gn["mandatory"] is True
+    assert gn["regex_pattern"] is None
+    assert gn["min_font_height_mm"] == 1.0
+    assert gn["placement_zone"] == "PDP"
+    assert gn["effective_date"] == date(2011, 4, 1)
+
+    # country_of_origin: mandatory=True, no regex (LMPC Rules 2011 Rule 6(1)(k))
+    coo = rules_by_field["country_of_origin"]
+    assert coo["mandatory"] is True
+    assert coo["regex_pattern"] is None
+    assert coo["min_font_height_mm"] == 1.0
+    assert coo["effective_date"] == date(2011, 4, 1)

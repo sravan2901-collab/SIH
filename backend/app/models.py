@@ -44,13 +44,14 @@ class Declaration(Base):
     __tablename__ = "declarations"
     declaration_id        = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     scan_id               = Column(UUID(as_uuid=True), ForeignKey("scans.scan_id"), nullable=False)
-    field_name            = Column(Enum("MRP","net_quantity","mfg_date","manufacturer_address","consumer_care","unit_sale_price","dimensions", name="field_name_enum"), nullable=False)
+    field_name            = Column(Enum("MRP","net_quantity","mfg_date","manufacturer_address","consumer_care","unit_sale_price","dimensions","generic_name","country_of_origin", name="field_name_enum"), nullable=False)
     extracted_value       = Column(Text)
     bounding_box          = Column(JSONB)
     confidence_score      = Column(Float)
     font_height_mm        = Column(Float)
     language_detected     = Column(String(20))
     is_manually_corrected = Column(Boolean, default=False)
+    contrast_ratio        = Column(Float, nullable=True)  # Gap 5: computed in Phase 7
 
 
 class RuleConfig(Base):
@@ -73,7 +74,7 @@ class Violation(Base):
     declaration_id = Column(UUID(as_uuid=True), ForeignKey("declarations.declaration_id"), nullable=True)
     rule_id        = Column(UUID(as_uuid=True), ForeignKey("rule_configs.rule_id"), nullable=False)
     category       = Column(Enum("missing","format","font","placement","misleading","language", name="violation_category_enum"), nullable=False)
-    severity       = Column(Enum("critical","minor", name="severity_enum"), nullable=False)
+    severity       = Column(Enum("critical","minor","major", name="severity_enum"), nullable=False)
     description    = Column(Text)
 
 
@@ -87,6 +88,7 @@ class InspectionReport(Base):
     pdf_path           = Column(Text)
     docx_path          = Column(Text)
     remarks            = Column(Text)
+    evidence_paths     = Column(JSONB, nullable=True, default=list)  # Gap 2: Phase 6 evidence photos
     status             = Column(Enum("draft","submitted","approved","sent_back","escalated", name="report_status_enum"), nullable=False, default="draft")
     created_at         = Column(DateTime, default=func.now())
     finalized_at       = Column(DateTime, nullable=True)
